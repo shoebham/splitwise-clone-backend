@@ -1,0 +1,74 @@
+-- Create a table called "todos"
+-- with a column to store tasks.
+	-- User {
+	--     UserID,
+	--     Name,
+	--     Balance,
+	--     Map<User, double> Owes,
+	--     Map<User, double> Owed,
+	-- }
+
+create table users (
+  uid serial primary key,
+  name varchar,
+  balance int,
+  owes jsonb,
+  owed jsonb
+);
+
+-- Turn on security
+alter table "users"
+enable row level security;
+
+-- Allow anonymous access
+create policy "Allow public access"
+  on users
+  for select
+  to anon
+  using (true);
+
+-- Group {
+-- 	    GroupID,
+-- 	    GroupName,
+-- 	    List<User> Members
+-- 	}
+
+create table groups(
+  gid serial primary key,
+  group_name varchar,
+  members jsonb
+)
+
+-- Turn on security
+alter table "groups"
+enable row level security;
+
+-- Allow anonymous access
+create policy "Allow public access"
+  on groups
+  for select
+  to anon
+  using (true);
+
+create table expenses (
+  eid serial primary key,
+  description varchar,
+  amount int,
+  added_by varchar,
+  paid_by varchar,
+  members jsonb,
+  isEqual boolean,
+  isSettled boolean,
+  gid int references groups(gid)
+);
+
+-- Turn on security
+alter table "expenses"
+enable row level security;
+
+-- Allow anonymous access
+create policy "Allow public access"
+  on expenses
+  for select
+  to anon
+  using (true);
