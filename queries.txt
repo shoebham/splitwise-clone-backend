@@ -72,3 +72,6 @@ create policy "Allow public access"
   for select
   to anon
   using (true);
+
+
+alter table users add number int
