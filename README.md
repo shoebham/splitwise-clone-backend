@@ -26,23 +26,23 @@ Types of Expense:
 endpoints:
 
 Expense Module:
-/expense -> id POST
-/expense/:id PUT
-/expense/:id DELETE
-/expense/:id/settleUp POST
+- /expense -> id POST
+- /expense/:id PUT
+- /expense/:id DELETE
+- /expense/:id/settle POST
 
 Group Module:
-/group -> id POST
-/group/:id PUT
-/group/addMember -> mid POST
-/group/deleteMember/:mid DELETE
-/group/:id DELETE
-/group/:id/updateTransactions POST//
+- /group -> id POST
+- /group/:id PUT
+- /group/addMember -> mid POST
+- /group/deleteMember/:mid DELETE
+- /group/:id DELETE
+- /group/:id/updateTransactions //
 
 User Module:
-/getGroupMembers
+- /getGroupMembers
 
-
+``` json
 User {
     UserID,
     Name,
@@ -70,3 +70,4 @@ Group {
     GroupName,
     List<User> Members
 }
+```
