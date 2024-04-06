@@ -29,15 +29,15 @@ Expense Module:
 /expense -> id POST
 /expense/:id PUT
 /expense/:id DELETE
-/expense/:id/settle POST
+/expense/:id/settleUp POST
 
 Group Module:
 /group -> id POST
 /group/:id PUT
-/group/add -> mid POST
-/group/delete:mid DELETE
+/group/addMember -> mid POST
+/group/deleteMember/:mid DELETE
 /group/:id DELETE
-/group/:id/updateTransactions PUT //
+/group/:id/updateTransactions POST//
 
 User Module:
 /getGroupMembers
