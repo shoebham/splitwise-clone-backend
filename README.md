@@ -26,18 +26,18 @@ Types of Expense:
 endpoints:
 
 Expense Module:
-/addExpense
-/editExpense
-/deleteExpense
-/settleUpExpense
+/expense -> id POST
+/expense/:id PUT
+/expense/:id DELETE
+/expense/:id/settle POST
 
 Group Module:
-/createGroup
-/editGroupDetails
-/addMember
-/deleteMember
-/deleteGroup
-/updateGroupTransactions //
+/group -> id POST
+/group/:id PUT
+/group/add -> mid POST
+/group/delete:mid DELETE
+/group/:id DELETE
+/group/:id/updateTransactions PUT //
 
 User Module:
 /getGroupMembers
