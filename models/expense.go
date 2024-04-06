@@ -20,8 +20,8 @@ type Expense struct {
 	Amount      int
 	User_added  string
 	User_paid   string
-	Members     map[*User]int
-	isEqually   bool
-	isSettled   bool
+	Members     map[*User]float64
+	IsEqually   bool
+	IsSettled   bool
 	GroupID     int
 }
