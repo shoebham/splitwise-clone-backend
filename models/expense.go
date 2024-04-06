@@ -15,13 +15,13 @@ Expense {
 */
 
 type Expense struct {
-	ExpenseID   int
-	Description string
-	Amount      int
-	User_added  string
-	User_paid   string
-	Members     map[*User]float64
-	IsEqually   bool
-	IsSettled   bool
-	GroupID     int
+	ExpenseID   int               `json:"expenseID"`
+	Description string            `json:"description"`
+	Amount      int               `json:"amount"`
+	User_added  string            `json:"user_added"`
+	User_paid   string            `json:"user_paid"`
+	Members     map[*User]float64 `json:"members"`
+	IsEqually   bool              `json:"isEqually"`
+	IsSettled   bool              `json:"isSettled"`
+	GroupID     int               `json:"groupID"`
 }
