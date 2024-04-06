@@ -1,19 +1,19 @@
-package splitwise_backend
+package main
 
 import (
 	"fmt"
+	"splitwise-backend/app"
+	"splitwise-backend/database"
 
-	"github.com/supabase-community/supabase-go"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
+	// Initialize the application
+	if err := app.Init(); err != nil {
+		fmt.Println("Error initializing application:", err)
+		return
+	}
 
-	client, err := supabase.NewClient(API_URL, API_KEY, nil)
-	if err != nil {
-		fmt.Println("cannot initalize client", err)
-	}
-	data, count, err := client.From("todos").Select("*", "exact", false).Execute()
-	if err == nil {
-		fmt.Println(string(data), err, count)
-	}
+	database.GetAllData("users")
 }
