@@ -42,7 +42,7 @@ Group Module:
 User Module:
 - /getGroupMembers
 
-``` json
+``` 
 User {
     UserID,
     Name,
