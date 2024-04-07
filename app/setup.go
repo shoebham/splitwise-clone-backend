@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"splitwise-backend/config"
+	"splitwise-backend/router"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -17,6 +18,7 @@ func Init() error {
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello World")
 	})
+	router.SetupRoutes(app)
 	log.Fatal(app.Listen(":3000"))
 	return nil
 }

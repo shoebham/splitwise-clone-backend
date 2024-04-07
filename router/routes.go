@@ -1,10 +1,15 @@
 package router
 
-import "github.com/gofiber/fiber/v3"
+import (
+	"splitwise-backend/handlers"
+
+	"github.com/gofiber/fiber/v3"
+)
 
 func SetupRoutes(app *fiber.App) {
 
 	setupGroupRoutes(app)
+	setupExpenseRoutes(app)
 }
 
 func setupGroupRoutes(app *fiber.App) {
@@ -12,6 +17,7 @@ func setupGroupRoutes(app *fiber.App) {
 
 	// get group details
 	groups.Get("/", func(c fiber.Ctx) error {
+		handlers.GetAllGroups(c.App())
 		return nil
 	})
 	// create new group
@@ -41,7 +47,7 @@ func setupGroupRoutes(app *fiber.App) {
 
 }
 
-func setupExpenseRoutes(app fiber.App) {
+func setupExpenseRoutes(app *fiber.App) {
 	expenses := app.Group("/expense")
 
 	// get group details

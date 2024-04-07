@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"splitwise-backend/app"
-	"splitwise-backend/database"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -15,5 +14,5 @@ func main() {
 		return
 	}
 
-	database.GetAllData("users")
+	// database.GetAllData("users")
 }
