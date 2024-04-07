@@ -18,4 +18,5 @@ type User struct {
 	Balance int               `json:"Balance"`
 	Owes    map[*User]float64 `json:"Owes"`
 	Owed    map[*User]float64 `json:"Owed"`
+	Number  string            `json:"Number"`
 }

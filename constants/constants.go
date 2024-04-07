@@ -2,9 +2,9 @@ package constants
 
 import "os"
 
-var API_KEY, API_URL string
+var DB_USER, DB_PASS string
 
 func InitVars() {
-	API_KEY = os.Getenv("API_KEY")
-	API_URL = os.Getenv("API_URL")
+	DB_USER = os.Getenv("DB_USER")
+	DB_PASS = os.Getenv("DB_PASS")
 }

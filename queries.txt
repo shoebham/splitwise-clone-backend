@@ -24,7 +24,7 @@ enable row level security;
 create policy "Allow public access"
   on users
   for select
-  to anon
+  to public
   using (true);
 
 -- Group {
@@ -33,11 +33,11 @@ create policy "Allow public access"
 -- 	    List<User> Members
 -- 	}
 
-create table groups(
+create table groups (
   gid serial primary key,
   group_name varchar,
-  members jsonb
-)
+  members text[]
+);
 
 -- Turn on security
 alter table "groups"
@@ -47,7 +47,7 @@ enable row level security;
 create policy "Allow public access"
   on groups
   for select
-  to anon
+  to public
   using (true);
 
 create table expenses (
@@ -70,8 +70,12 @@ enable row level security;
 create policy "Allow public access"
   on expenses
   for select
-  to anon
+  to public
   using (true);
 
 
 alter table users add number int
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO shubham;
+
+
+-- insert dummy data
