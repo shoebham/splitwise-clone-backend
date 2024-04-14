@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"splitwise-backend/constants"
 	"splitwise-backend/models"
 
@@ -71,9 +72,11 @@ func InsertInUserTable(user models.User) {
 }
 
 func InsertInGroupTable(group models.Group) {
-	userId := make([]int, 0, len(group.Members))
-	for _, user := range group.Members {
-		userId = append(userId, user.UserID)
+	userId := make([]int, 0, rand.Intn(len(group.Members)))
+	for _, member := range group.Members {
+		if rand.Float64() < 0.5 { // Randomly decide to add a member or not
+			userId = append(userId, member.UserID)
+		}
 	}
 	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
 	_, err := db.Exec(query, group.GroupName, pq.Array(userId))

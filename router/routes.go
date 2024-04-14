@@ -48,14 +48,6 @@ func setupUserRoutes(app *fiber.App) {
 func setupGroupRoutes(app *fiber.App) {
 	groups := app.Group("/group")
 
-	groupsArr := []models.Group{}
-	for i := 0; i < 10; i++ {
-		group_name := faker.Word()
-		groupsArr = append(groupsArr, models.Group{
-			GroupName: group_name,
-			Members:   fakeUsers,
-		})
-	}
 	// get group details
 	groups.Get("/", func(c fiber.Ctx) error {
 		handlers.GetAllGroups(c.App())
@@ -63,6 +55,15 @@ func setupGroupRoutes(app *fiber.App) {
 	})
 	// create new group
 	groups.Post("/", func(c fiber.Ctx) error {
+		groupsArr := []models.Group{}
+		for i := 0; i < 10; i++ {
+			group_name := faker.Word()
+
+			groupsArr = append(groupsArr, models.Group{
+				GroupName: group_name,
+				Members:   fakeUsers,
+			})
+		}
 		for _, group := range groupsArr {
 			handlers.CreateGroup(app, group)
 		}
