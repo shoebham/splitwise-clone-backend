@@ -50,7 +50,7 @@ func setupGroupRoutes(app *fiber.App) {
 
 	groupsArr := []models.Group{}
 	for i := 0; i < 10; i++ {
-		group_name := faker.Name()
+		group_name := faker.Word()
 		groupsArr = append(groupsArr, models.Group{
 			GroupName: group_name,
 			Members:   fakeUsers,

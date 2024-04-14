@@ -14,3 +14,7 @@ func GetAllGroups(c *fiber.App) {
 func GetAllUsers(c *fiber.App) []models.User {
 	return database.SelectFromUsers()
 }
+
+func CreateGroup(c *fiber.App, group models.Group) {
+	database.InsertInGroupTable(group)
+}

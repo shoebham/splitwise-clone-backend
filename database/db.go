@@ -61,14 +61,8 @@ func SelectFromUsers() []models.User {
 	return users
 }
 func InsertInUserTable(user models.User) {
-	query := "INSERT INTO USERS (name, number) VALUES ($1,$2) RETURNING id"
+	query := "INSERT INTO USERS (name, number) VALUES ($1,$2) "
 	_, err := db.Query(query, user.Name, user.Number)
-	if err != nil {
-		panic(err)
-	}
-	query = "SELECT SCOPE_IDENTITY()"
-
-	_, err = db.Query(query, user.Name, user.Number)
 	if err != nil {
 		panic(err)
 	}
@@ -77,8 +71,12 @@ func InsertInUserTable(user models.User) {
 }
 
 func InsertInGroupTable(group models.Group) {
+	userId := make([]int, 0, len(group.Members))
+	for _, user := range group.Members {
+		userId = append(userId, user.UserID)
+	}
 	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
-	_, err := db.Exec(query, group.GroupName, pq.Array(group.Members))
+	_, err := db.Exec(query, group.GroupName, pq.Array(userId))
 	if err != nil {
 		panic(err)
 	}
