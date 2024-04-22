@@ -3,7 +3,7 @@ package models
 /*
 
 User {
-    UserID,
+    Uid,
     Name,
     Balance,
     Map<User, double> Owes,
@@ -13,7 +13,7 @@ User {
 */
 
 type User struct {
-	UserID  int               `json:"UserID"`
+	Uid     int               `json:"Uid"`
 	Name    string            `json:"Name"`
 	Balance int               `json:"Balance"`
 	Owes    map[*User]float64 `json:"Owes"`

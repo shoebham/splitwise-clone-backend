@@ -53,7 +53,7 @@ func SelectFromUsers() []models.User {
 		var owesMap *map[*models.User]float64 // Declare a pointer to a map
 		var owedMap *map[*models.User]float64 // Declare a pointer to a map
 
-		if err := rows.Scan(&user.UserID, &user.Name, &user.Balance, &owesMap, &owedMap, &user.Number); err != nil {
+		if err := rows.Scan(&user.Uid, &user.Name, &user.Balance, &owesMap, &owedMap, &user.Number); err != nil {
 			panic(err)
 		}
 		users = append(users, user)
@@ -75,7 +75,7 @@ func InsertInGroupTable(group models.Group) {
 	userId := make([]int, 0, rand.Intn(len(group.Members)))
 	for _, member := range group.Members {
 		if rand.Float64() < 0.5 { // Randomly decide to add a member or not
-			userId = append(userId, member.UserID)
+			userId = append(userId, member.Uid)
 		}
 	}
 	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
