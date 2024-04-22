@@ -10,5 +10,5 @@ package models
 type Group struct {
 	Gid       int    `json:"Gid"`
 	GroupName string `json:"GroupName"`
-	Members   []User `json:"Members"`
+	Members   []int  `json:"Members"`
 }

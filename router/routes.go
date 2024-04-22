@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"splitwise-backend/handlers"
 	"splitwise-backend/models"
+	"strconv"
 
-	"github.com/go-faker/faker/v4"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -20,18 +20,7 @@ var fakeUsers []models.User
 func setupUserRoutes(app *fiber.App) {
 	users := app.Group("/user")
 
-	usersArr := []models.User{}
-	for i := 0; i < 10; i++ {
-		name := faker.Name()
-		// owes := make(map[*models.User]float64) //rand.Intn(500)
-		// owed := make(map[*models.User]float64) //rand.Intn(500)
-		// balance := 0                           //owed - owes
-		number := faker.Phonenumber()
-		usersArr = append(usersArr, models.User{
-			Name:   name,
-			Number: number,
-		})
-	}
+	usersArr := createFakeUsers()
 	users.Get("/", func(c fiber.Ctx) error {
 		fakeUsers = handlers.GetAllUsers(app)
 		return c.SendString("Hello Users")
@@ -45,6 +34,7 @@ func setupUserRoutes(app *fiber.App) {
 		return nil
 	})
 }
+
 func setupGroupRoutes(app *fiber.App) {
 	groups := app.Group("/group")
 
@@ -55,15 +45,7 @@ func setupGroupRoutes(app *fiber.App) {
 	})
 	// create new group
 	groups.Post("/", func(c fiber.Ctx) error {
-		groupsArr := []models.Group{}
-		for i := 0; i < 10; i++ {
-			group_name := faker.Word()
-
-			groupsArr = append(groupsArr, models.Group{
-				GroupName: group_name,
-				Members:   fakeUsers,
-			})
-		}
+		groupsArr := createFakeGroups()
 		for _, group := range groupsArr {
 			handlers.CreateGroup(app, group)
 		}
@@ -74,7 +56,21 @@ func setupGroupRoutes(app *fiber.App) {
 	})
 	// update group with group id
 	groups.Put("/:id", func(c fiber.Ctx) error {
+
+		idStr := c.Params("id")
+		_, err := strconv.Atoi(idStr)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{
+				"message": "Invalid id",
+			})
+		}
+		var updatedGroup models.Group
+		if err := c.Bind().Body(&updatedGroup); err != nil {
+			return err
+		}
+		handlers.UpdateGroup(app, updatedGroup)
 		return nil
+
 	})
 	// delete group with group id
 	groups.Delete("/:id", func(c fiber.Ctx) error {

@@ -11,10 +11,10 @@ func GetAllGroups(c *fiber.App) {
 	database.GetAllData("groups")
 }
 
-func GetAllUsers(c *fiber.App) []models.User {
-	return database.SelectFromUsers()
-}
-
 func CreateGroup(c *fiber.App, group models.Group) {
 	database.InsertInGroupTable(group)
+}
+
+func UpdateGroup(c *fiber.App, group models.Group) {
+	database.UpdateGroup(group)
 }

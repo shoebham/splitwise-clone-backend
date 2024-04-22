@@ -10,3 +10,7 @@ import (
 func CreateUser(c *fiber.App, user models.User) {
 	database.InsertInUserTable(user)
 }
+
+func GetAllUsers(c *fiber.App) []models.User {
+	return database.SelectFromUsers()
+}
