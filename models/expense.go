@@ -2,7 +2,7 @@ package models
 
 /*
 Expense {
-    ExpenseID,
+    Eid,
     Description,
     Amount,
     User Added,
@@ -15,13 +15,13 @@ Expense {
 */
 
 type Expense struct {
-	ExpenseID   int               `json:"expenseID"`
-	Description string            `json:"description"`
-	Amount      int               `json:"amount"`
-	User_added  string            `json:"user_added"`
-	User_paid   string            `json:"user_paid"`
-	Members     map[*User]float64 `json:"members"`
-	IsEqually   bool              `json:"isEqually"`
-	IsSettled   bool              `json:"isSettled"`
-	GroupID     int               `json:"groupID"`
+	Eid         int               `json:"Eid"`
+	Description string            `json:"Description"`
+	Amount      int               `json:"Amount"`
+	User_added  string            `json:"User_added"`
+	User_paid   string            `json:"User_paid"`
+	Members     map[*User]float64 `json:"Members"`
+	IsEqually   bool              `json:"IsEqually"`
+	IsSettled   bool              `json:"IsSettled"`
+	Gid         int               `json:"Gid"`
 }
