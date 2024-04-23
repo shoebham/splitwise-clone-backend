@@ -50,7 +50,7 @@ func setupGroupRoutes(app *fiber.App) {
 			handlers.CreateGroup(app, group)
 		}
 		return c.Status(200).JSON(fiber.Map{
-			"message": "Success",
+			"message": "Group Created",
 		})
 		return nil
 	})
@@ -77,8 +77,17 @@ func setupGroupRoutes(app *fiber.App) {
 			return idErr
 		}
 
-		handlers.DeleteGroup(idInt)
-		return nil
+		if err := handlers.DeleteGroup(idInt); err != nil {
+
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error":   true,
+				"message": err.Error(),
+			})
+		}
+		return c.Status(200).JSON(fiber.Map{
+			"message": "Group Deleted",
+		})
+
 	})
 	// add group member and get member id in return
 	groups.Post("/addMember", func(c fiber.Ctx) error {

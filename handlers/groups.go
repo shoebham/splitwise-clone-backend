@@ -19,6 +19,10 @@ func UpdateGroup(c *fiber.App, group models.Group) {
 	database.UpdateGroup(group)
 }
 
-func DeleteGroup(gid int) {
-	database.DeleteGroup(gid)
+func DeleteGroup(gid int) error {
+	err := database.DeleteGroup(gid)
+	if err != nil {
+		return err
+	}
+	return nil
 }

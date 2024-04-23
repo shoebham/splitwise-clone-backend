@@ -34,3 +34,15 @@ func GetAllData(tableName string) {
 		fmt.Printf("%v", rows.Scan())
 	}
 }
+
+func CheckIdExists(tableName string, columnName string, id int) (bool, error) {
+
+	query := fmt.Sprintf("SELECT exists(select 1 from %s where %s = %d)", tableName, columnName, id)
+	var exists bool
+	err := db.QueryRow(query).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+
+}

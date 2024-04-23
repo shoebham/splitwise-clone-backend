@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"github.com/lib/pq"
 	"math/rand"
 	"splitwise-backend/models"
@@ -33,12 +34,18 @@ func UpdateGroup(group models.Group) {
 
 }
 
-func DeleteGroup(gid int) {
+func DeleteGroup(gid int) error {
 
-	query := "DELETE FROM groups WHERE gid = $1"
+	exists, _ := CheckIdExists("groups", "gid", gid)
+	if exists {
+		query := "DELETE FROM groups WHERE gid = $1"
 
-	_, err := db.Query(query, gid)
-	if err != nil {
-		panic(err)
+		_, err := db.Query(query, gid)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		return errors.New("Group not found")
 	}
+	return nil
 }
