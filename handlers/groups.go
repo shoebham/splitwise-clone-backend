@@ -30,3 +30,19 @@ func DeleteGroup(gid int) error {
 	}
 	return nil
 }
+
+func AddMembersToGroup(gid int, memberList []int) error {
+	err := database.AddMembersToGroup(gid, memberList)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteMembersFromGroup(gid int, memberList []int) error {
+	err := database.DeleteMembersFromGroup(gid, memberList)
+	if err != nil {
+		return err
+	}
+	return nil
+}

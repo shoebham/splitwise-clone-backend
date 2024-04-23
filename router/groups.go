@@ -1,6 +1,7 @@
 package router
 
 import (
+	"encoding/json"
 	"github.com/gofiber/fiber/v3"
 	"splitwise-backend/handlers"
 	"splitwise-backend/models"
@@ -26,15 +27,40 @@ func updateTransactions(groups fiber.Router) fiber.Router {
 
 func deleteGroupMember(groups fiber.Router) {
 	// delete group member with member id
-	groups.Delete("/deleteMember/:mid", func(c fiber.Ctx) error {
-		return nil
+	groups.Delete("/:id/deleteMember", func(c fiber.Ctx) error {
+		idInt, idErr := checkId(c)
+		if idErr != nil {
+			return idErr
+		}
+		var groupMemberList []int
+		if err := json.Unmarshal(c.Response().Body(), &groupMemberList); err != nil {
+			return internalError(c, err)
+		}
+		if err := handlers.DeleteMembersFromGroup(idInt, groupMemberList); err != nil {
+			return internalError(c, err)
+		}
+		return successfulRequest(c, "Group Member Deleted")
+
 	})
 }
 
 func addGroupMember(groups fiber.Router) {
+	// expected body { members: ["id1","id2","id3","id4"]}
 	// add group member and get member id in return
-	groups.Post("/addMember", func(c fiber.Ctx) error {
-		return nil
+	groups.Post("/:id/addMember", func(c fiber.Ctx) error {
+
+		idInt, idErr := checkId(c)
+		if idErr != nil {
+			return idErr
+		}
+		var groupMemberList []int
+		if err := json.Unmarshal(c.Response().Body(), &groupMemberList); err != nil {
+			return internalError(c, err)
+		}
+		if err := handlers.AddMembersToGroup(idInt, groupMemberList); err != nil {
+			return internalError(c, err)
+		}
+		return successfulRequest(c, "Group Member Added")
 	})
 }
 
