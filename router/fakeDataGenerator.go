@@ -5,7 +5,7 @@ import (
 	"splitwise-backend/models"
 )
 
-func createFakeUsers() []models.User {
+func CreateFakeUsers() []models.User {
 	usersArr := []models.User{}
 	for i := 0; i < 10; i++ {
 		name := faker.Name()
