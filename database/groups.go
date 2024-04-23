@@ -66,7 +66,7 @@ func AddMembersToGroup(gid int, members []int) error {
 
 	if exists {
 		query := "UPDATE groups SET members = $1 where gid = $2"
-		_, err := db.Exec(query, gid, pq.Array(members))
+		_, err := db.Exec(query, pq.Array(members), gid)
 		if err != nil {
 			panic(err)
 		}
@@ -83,11 +83,11 @@ func DeleteMembersFromGroup(gid int, members []int) error {
 	if exists {
 		for _, member := range members {
 			query := "UPDATE groups SET members = array_remove(members,$1) where gid = $2"
-			_, err := db.Exec(query, pq.Array(member))
+			_, err := db.Exec(query, member, gid)
 			if err != nil {
 				panic(err)
 			}
-			log.Warn("Delete Member:", member, " From group: ", gid)
+			log.Warn("Deleted Member:", member, " From group: ", gid)
 		}
 	} else {
 		return errors.New("group not found")
