@@ -57,12 +57,9 @@ func setupGroupRoutes(app *fiber.App) {
 	// update group with group id
 	groups.Put("/:id", func(c fiber.Ctx) error {
 
-		idStr := c.Params("id")
-		_, err := strconv.Atoi(idStr)
-		if err != nil {
-			return c.Status(400).JSON(fiber.Map{
-				"message": "Invalid id",
-			})
+		_, idErr := checkId(c)
+		if idErr != nil {
+			return idErr
 		}
 		var updatedGroup models.Group
 		if err := c.Bind().Body(&updatedGroup); err != nil {
@@ -74,6 +71,13 @@ func setupGroupRoutes(app *fiber.App) {
 	})
 	// delete group with group id
 	groups.Delete("/:id", func(c fiber.Ctx) error {
+
+		idInt, idErr := checkId(c)
+		if idErr != nil {
+			return idErr
+		}
+
+		handlers.DeleteGroup(idInt)
 		return nil
 	})
 	// add group member and get member id in return
@@ -89,6 +93,17 @@ func setupGroupRoutes(app *fiber.App) {
 		return nil
 	})
 
+}
+
+func checkId(c fiber.Ctx) (int, error) {
+	idStr := c.Params("id")
+	idInt, idErr := strconv.Atoi(idStr)
+	if idErr != nil {
+		return -1, c.Status(400).JSON(fiber.Map{
+			"message": "Invalid id",
+		})
+	}
+	return idInt, nil
 }
 
 func setupExpenseRoutes(app *fiber.App) {

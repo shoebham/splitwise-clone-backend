@@ -18,3 +18,7 @@ func CreateGroup(c *fiber.App, group models.Group) {
 func UpdateGroup(c *fiber.App, group models.Group) {
 	database.UpdateGroup(group)
 }
+
+func DeleteGroup(gid int) {
+	database.DeleteGroup(gid)
+}

@@ -3,11 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"math/rand"
 	"splitwise-backend/constants"
-	"splitwise-backend/models"
 
-	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
@@ -36,73 +33,4 @@ func GetAllData(tableName string) {
 	for rows.Next() {
 		fmt.Printf("%v", rows.Scan())
 	}
-}
-
-func SelectFromUsers() []models.User {
-	query := "SELECT * from users"
-	rows, err := db.Query(query)
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-
-	users := []models.User{}
-	for rows.Next() {
-
-		user := models.User{}
-		var owesMap *map[*models.User]float64 // Declare a pointer to a map
-		var owedMap *map[*models.User]float64 // Declare a pointer to a map
-
-		if err := rows.Scan(&user.Uid, &user.Name, &user.Balance, &owesMap, &owedMap, &user.Number); err != nil {
-			panic(err)
-		}
-		users = append(users, user)
-		fmt.Printf("Name: %s, Number: %s\n", user.Name, user.Number)
-	}
-	return users
-}
-func InsertInUserTable(user models.User) {
-	query := "INSERT INTO USERS (name, number) VALUES ($1,$2) "
-	_, err := db.Query(query, user.Name, user.Number)
-	if err != nil {
-		panic(err)
-	}
-
-	// defer rows.Close()
-}
-
-func InsertInGroupTable(group models.Group) {
-	userId := make([]int, 0, rand.Intn(len(group.Members)))
-	for _, member := range group.Members {
-		if rand.Float64() < 0.5 { // Randomly decide to add a member or not
-			userId = append(userId, member)
-		}
-	}
-	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
-	_, err := db.Exec(query, group.GroupName, pq.Array(userId))
-	if err != nil {
-		panic(err)
-	}
-}
-
-func InsertInExpenseTable(expense models.Expense) {
-	query := "INSERT INTO EXPENSES (description, amount,added_by,paid_by,members,isequal,issettled) VALUES ($1,$2,$3,$4,$5,$6,$7)"
-
-	_, err := db.Exec(query, expense.Description, expense.Amount, expense.User_added, expense.User_paid, expense.Members, expense.IsEqually, expense.IsSettled)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func GetGroups() {
-}
-
-func UpdateGroup(group models.Group) {
-	query := "UPDATE groups SET group_name= $1, members =$2 where gid = $3"
-
-	_, err := db.Query(query, group.GroupName, pq.Array(group.Members), group.Gid)
-	if err != nil {
-		panic(err)
-	}
-
 }
