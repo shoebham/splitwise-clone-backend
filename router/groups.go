@@ -49,15 +49,10 @@ func deleteGroup(groups fiber.Router) {
 
 		if err := handlers.DeleteGroup(idInt); err != nil {
 
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":   true,
-				"message": err.Error(),
-			})
+			return internalError(c, err)
 		}
-		return c.Status(200).JSON(fiber.Map{
-			"message": "Group Deleted",
-		})
 
+		return successfulRequest(c, "Group Deleted")
 	})
 }
 
@@ -73,8 +68,11 @@ func updateGroup(app *fiber.App, groups fiber.Router) {
 		if err := c.Bind().Body(&updatedGroup); err != nil {
 			return err
 		}
-		handlers.UpdateGroup(app, updatedGroup)
-		return nil
+		if err := handlers.UpdateGroup(updatedGroup); err != nil {
+			return internalError(c, err)
+		}
+
+		return successfulRequest(c, "Group Updated")
 
 	})
 }
@@ -86,10 +84,8 @@ func createNewGroup(app *fiber.App, groups fiber.Router) {
 		for _, group := range groupsArr {
 			handlers.CreateGroup(app, group)
 		}
-		return c.Status(200).JSON(fiber.Map{
-			"message": "Group Created",
-		})
-		return nil
+
+		return successfulRequest(c, "Group Created")
 	})
 }
 
@@ -98,5 +94,17 @@ func getGroupDetails(groups fiber.Router) {
 	groups.Get("/", func(c fiber.Ctx) error {
 		handlers.GetAllGroups(c.App())
 		return nil
+	})
+}
+func successfulRequest(c fiber.Ctx, message string) error {
+	return c.Status(200).JSON(fiber.Map{
+		"message": message,
+	})
+
+}
+func internalError(c fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		"error":   true,
+		"message": err.Error(),
 	})
 }

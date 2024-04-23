@@ -15,8 +15,12 @@ func CreateGroup(c *fiber.App, group models.Group) {
 	database.InsertInGroupTable(group)
 }
 
-func UpdateGroup(c *fiber.App, group models.Group) {
-	database.UpdateGroup(group)
+func UpdateGroup(group models.Group) error {
+	err := database.UpdateGroup(group)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DeleteGroup(gid int) error {

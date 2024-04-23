@@ -24,14 +24,21 @@ func InsertInGroupTable(group models.Group) {
 	}
 }
 
-func UpdateGroup(group models.Group) {
-	query := "UPDATE groups SET group_name= $1, members =$2 where gid = $3"
+func UpdateGroup(group models.Group) error {
 
-	_, err := db.Query(query, group.GroupName, pq.Array(group.Members), group.Gid)
-	if err != nil {
-		panic(err)
+	exists, _ := CheckIdExists("groups", "gid", group.Gid)
+	if exists {
+		query := "UPDATE groups SET group_name= $1, members =$2 where gid = $3"
+
+		_, err := db.Query(query, group.GroupName, pq.Array(group.Members), group.Gid)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		return errors.New("group not found")
 	}
 
+	return nil
 }
 
 func DeleteGroup(gid int) error {
@@ -45,7 +52,7 @@ func DeleteGroup(gid int) error {
 			panic(err)
 		}
 	} else {
-		return errors.New("Group not found")
+		return errors.New("group not found")
 	}
 	return nil
 }
