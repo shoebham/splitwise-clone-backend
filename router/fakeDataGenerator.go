@@ -37,3 +37,17 @@ func createFakeGroups() []models.Group {
 	}
 	return groupsArr
 }
+
+func createFakeExpenses() []models.Expense {
+	expenseArr := []models.Expense{}
+	for i := 0; i < 10; i++ {
+		var expense models.Expense
+		_ = faker.FakeData(&expense)
+		expense.Members = map[int]float64{
+			102: float64(expense.Amount / 2),
+			103: float64(expense.Amount / 2),
+		}
+		expenseArr = append(expenseArr, expense)
+	}
+	return expenseArr
+}

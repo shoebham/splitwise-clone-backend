@@ -1,10 +1,9 @@
 package router
 
 import (
+	"github.com/gofiber/fiber/v3"
 	"splitwise-backend/models"
 	"strconv"
-
-	"github.com/gofiber/fiber/v3"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -15,7 +14,7 @@ func SetupRoutes(app *fiber.App) {
 
 var fakeUsers []models.User
 
-func checkId(c fiber.Ctx) (int, error) {
+func CheckId(c fiber.Ctx) (int, error) {
 	idStr := c.Params("id")
 	idInt, idErr := strconv.Atoi(idStr)
 	if idErr != nil {
@@ -24,4 +23,16 @@ func checkId(c fiber.Ctx) (int, error) {
 		})
 	}
 	return idInt, nil
+}
+func SuccessfulRequest(c fiber.Ctx, message string) error {
+	return c.Status(200).JSON(fiber.Map{
+		"message": message,
+	})
+
+}
+func InternalError(c fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		"error":   true,
+		"message": err.Error(),
+	})
 }
