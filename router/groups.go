@@ -17,35 +17,61 @@ func SetupGroupRoutes(app *fiber.App) {
 	updateTransactions(groups)
 
 }
-
-func updateTransactions(groups fiber.Router) fiber.Router {
-	return groups.Post("/:id/updateTransactions", func(c fiber.Ctx) error {
+func getGroupDetails(groups fiber.Router) {
+	// get group details
+	groups.Get("/", func(c fiber.Ctx) error {
+		handlers.GetAllGroups(c.App())
 		return nil
 	})
 }
+func createNewGroup(app *fiber.App, groups fiber.Router) {
+	// create new group
+	groups.Post("/", func(c fiber.Ctx) error {
+		groupsArr := createFakeGroups()
+		for _, group := range groupsArr {
+			handlers.CreateGroup(app, group)
+		}
 
-func deleteGroupMember(groups fiber.Router) {
-	type DeleteMemberRequest struct {
-		Members []int `json:"members"`
-	}
-	// delete group member with member id
-	groups.Delete("/:id/member", func(c fiber.Ctx) error {
+		return SuccessfulRequest(c, "Group Created")
+	})
+}
+
+func updateGroup(app *fiber.App, groups fiber.Router) {
+	// update group with group id
+	groups.Put("/:id", func(c fiber.Ctx) error {
+
+		_, idErr := CheckId(c)
+		if idErr != nil {
+			return idErr
+		}
+		var updatedGroup models.Group
+		if err := c.Bind().Body(&updatedGroup); err != nil {
+			return err
+		}
+		if err := handlers.UpdateGroup(updatedGroup); err != nil {
+			return InternalError(c, err)
+		}
+
+		return SuccessfulRequest(c, "Group Updated")
+
+	})
+}
+
+func deleteGroup(groups fiber.Router) {
+	// delete group with group id
+	groups.Delete("/:id", func(c fiber.Ctx) error {
+
 		idInt, idErr := CheckId(c)
 		if idErr != nil {
 			return idErr
 		}
 
-		var deleteMemberRequest DeleteMemberRequest
-		var groupMemberList []int
-		if err := c.Bind().Body(&deleteMemberRequest); err != nil {
-			return InternalError(c, err)
-		}
-		groupMemberList = deleteMemberRequest.Members
-		if err := handlers.DeleteMembersFromGroup(idInt, groupMemberList); err != nil {
-			return InternalError(c, err)
-		}
-		return SuccessfulRequest(c, "Group Member Deleted")
+		if err := handlers.DeleteGroup(idInt); err != nil {
 
+			return InternalError(c, err)
+		}
+
+		return SuccessfulRequest(c, "Group Deleted")
 	})
 }
 
@@ -75,61 +101,33 @@ func addGroupMember(groups fiber.Router) {
 	})
 }
 
-func deleteGroup(groups fiber.Router) {
-	// delete group with group id
-	groups.Delete("/:id", func(c fiber.Ctx) error {
-
+func deleteGroupMember(groups fiber.Router) {
+	type DeleteMemberRequest struct {
+		Members []int `json:"members"`
+	}
+	// delete group member with member id
+	groups.Delete("/:id/member", func(c fiber.Ctx) error {
 		idInt, idErr := CheckId(c)
 		if idErr != nil {
 			return idErr
 		}
 
-		if err := handlers.DeleteGroup(idInt); err != nil {
-
+		var deleteMemberRequest DeleteMemberRequest
+		var groupMemberList []int
+		if err := c.Bind().Body(&deleteMemberRequest); err != nil {
 			return InternalError(c, err)
 		}
-
-		return SuccessfulRequest(c, "Group Deleted")
-	})
-}
-
-func updateGroup(app *fiber.App, groups fiber.Router) {
-	// update group with group id
-	groups.Put("/:id", func(c fiber.Ctx) error {
-
-		_, idErr := CheckId(c)
-		if idErr != nil {
-			return idErr
-		}
-		var updatedGroup models.Group
-		if err := c.Bind().Body(&updatedGroup); err != nil {
-			return err
-		}
-		if err := handlers.UpdateGroup(updatedGroup); err != nil {
+		groupMemberList = deleteMemberRequest.Members
+		if err := handlers.DeleteMembersFromGroup(idInt, groupMemberList); err != nil {
 			return InternalError(c, err)
 		}
-
-		return SuccessfulRequest(c, "Group Updated")
+		return SuccessfulRequest(c, "Group Member Deleted")
 
 	})
 }
 
-func createNewGroup(app *fiber.App, groups fiber.Router) {
-	// create new group
-	groups.Post("/", func(c fiber.Ctx) error {
-		groupsArr := createFakeGroups()
-		for _, group := range groupsArr {
-			handlers.CreateGroup(app, group)
-		}
-
-		return SuccessfulRequest(c, "Group Created")
-	})
-}
-
-func getGroupDetails(groups fiber.Router) {
-	// get group details
-	groups.Get("/", func(c fiber.Ctx) error {
-		handlers.GetAllGroups(c.App())
+func updateTransactions(groups fiber.Router) fiber.Router {
+	return groups.Post("/:id/updateTransactions", func(c fiber.Ctx) error {
 		return nil
 	})
 }
