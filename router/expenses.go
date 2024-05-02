@@ -10,17 +10,16 @@ import (
 func SetupExpenseRoutes(app *fiber.App) {
 	expenses := app.Group("/expense")
 
-	// get group details
+	// get expense
 	getExpenseDetails(expenses)
-	// create new group
+	// create new expense
 	createNewExpense(expenses)
-	// update group with group id
+	// update expense with expense id
 	updateExpense(expenses)
-	// delete group with group id
-	expenses.Delete("/:id", func(c fiber.Ctx) error {
-		return nil
-	})
-	// delete group with group id
+	// delete expense with expense id
+	deleteExpense(expenses)
+	// settleUp transaction
+	settleUp(expenses)
 	expenses.Post("/:id/settleUp", func(c fiber.Ctx) error {
 		return nil
 	})
@@ -73,5 +72,20 @@ func updateExpense(expenses fiber.Router) {
 }
 
 func deleteExpense(expenses fiber.Router) {
+	expenses.Delete("/:id", func(c fiber.Ctx) error {
+		idInt, idErr := CheckId(c)
+		if idErr != nil {
+			return idErr
+		}
+		if err := handlers.DeleteExpense(idInt); err != nil {
+			return InternalError(c, err)
+		}
+		return SuccessfulRequest(c, "Expense Deleted")
+
+	})
+
+}
+
+func settleUp(expenses fiber.Router) {
 
 }

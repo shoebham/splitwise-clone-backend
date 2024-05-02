@@ -22,7 +22,10 @@ func UpdateExpense(expense models.Expense) error {
 	return nil
 }
 
-func DeleteExpense(expense models.Expense) error {
+func DeleteExpense(eid int) error {
 
+	if err := database.DeleteFromExpenseTable(eid); err != nil {
+		return err
+	}
 	return nil
 }

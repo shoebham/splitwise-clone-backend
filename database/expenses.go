@@ -2,7 +2,9 @@ package database
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/gofiber/fiber/v3/log"
 	"reflect"
 	"splitwise-backend/models"
 	"strings"
@@ -32,8 +34,19 @@ func UpdateInExpenseTable(expense models.Expense) error {
 	return nil
 }
 
-func DeleteFromExpenseTable(expense models.Expense) error {
+func DeleteFromExpenseTable(eid int) error {
+	exists, _ := CheckIdExists("expenses", "eid", eid)
+	if exists {
+		query := "DELETE FROM expenses WHERE eid = $1"
 
+		_, err := db.Query(query, eid)
+		if err != nil {
+			panic(err)
+		}
+		log.Warn("Deleted Expense", eid)
+	} else {
+		return errors.New("Expense not found")
+	}
 	return nil
 }
 
