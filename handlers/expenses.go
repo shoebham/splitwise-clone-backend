@@ -29,3 +29,11 @@ func DeleteExpense(eid int) error {
 	}
 	return nil
 }
+
+func SettleExpense(expense models.Expense) error {
+
+	if err := database.UpdateInExpenseTable(expense); err != nil {
+		return err
+	}
+	return nil
+}

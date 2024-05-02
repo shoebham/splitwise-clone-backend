@@ -21,18 +21,58 @@ func InitDb() {
 	// defer db.Close()
 
 }
-func GetAllData(tableName string) {
-
-	query := fmt.Sprintf("SELECT * from %s", tableName)
-	rows, err := db.Query(query)
+func GetAllData(tableName string) error {
+	rows, err := selectAllFromTableInternal(db, tableName)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		fmt.Printf("%v", rows.Scan())
+	// Get the column names
+	columns, err := rows.Columns()
+	if err != nil {
+		return err
 	}
+
+	// Create a slice to hold the values
+	values := make([]interface{}, len(columns))
+	valuePtrs := make([]interface{}, len(columns))
+	columnName := make([]interface{}, len(columns))
+
+	for rows.Next() {
+		// Populate the value pointers
+		for i := range columns {
+			valuePtrs[i] = &values[i]
+			columnName[i] = columns[i]
+		}
+
+		// Scan the row into the value pointers
+		if err := rows.Scan(valuePtrs...); err != nil {
+			return err
+		}
+
+		// Print the row
+		for i := range columns {
+			fmt.Printf("[%s]: %v \n", columnName[i], values[i])
+		}
+		fmt.Println("--------")
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func selectAllFromTableInternal(db *sql.DB, tableName string) (*sql.Rows, error) {
+	query := fmt.Sprintf("SELECT * FROM %s", tableName)
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }
 
 func CheckIdExists(tableName string, columnName string, id int) (bool, error) {

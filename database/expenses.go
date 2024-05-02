@@ -80,3 +80,7 @@ func buildUpdateQuery(model interface{}) (string, []interface{}) {
 
 	return query, queryParams
 }
+
+func SettleExpense(expense models.Expense) {
+
+}

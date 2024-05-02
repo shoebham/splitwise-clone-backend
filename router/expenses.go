@@ -20,9 +20,6 @@ func SetupExpenseRoutes(app *fiber.App) {
 	deleteExpense(expenses)
 	// settleUp transaction
 	settleUp(expenses)
-	expenses.Post("/:id/settleUp", func(c fiber.Ctx) error {
-		return nil
-	})
 }
 
 func getExpenseDetails(expenses fiber.Router) {
@@ -87,5 +84,24 @@ func deleteExpense(expenses fiber.Router) {
 }
 
 func settleUp(expenses fiber.Router) {
+	expenses.Post("/:id/settleUp", func(c fiber.Ctx) error {
+		// settle expense between n members
+		// expense.issettled = true
+		// update user balance, owes,owed
+		idInt, idErr := CheckId(c)
+		if idErr != nil {
+			return idErr
+		}
+
+		var expense models.Expense
+		expense.Eid = idInt
+		expense.IsSettled = true
+		if err := handlers.SettleExpense(expense); err != nil {
+			return InternalError(c, err)
+		}
+		return SuccessfulRequest(c, "Expense Settled")
+
+		return nil
+	})
 
 }
