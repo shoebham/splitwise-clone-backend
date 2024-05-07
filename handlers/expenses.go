@@ -15,6 +15,20 @@ func CreateExpense(expense models.Expense) error {
 	if err := database.InsertInExpenseTable(expense); err != nil {
 		return err
 	}
+	// for each user update in user table
+	// if not equal then iterate over user members, check the sum of share it should be equal to amount
+	// for each user update users share, if user paid and in members, do nothing for that user
+
+	//for userId, share := range expense.Members {
+	//	if userId == expense.User_paid{
+	//
+	//	}
+	//	user := models.User{
+	//		uid:userId,
+	//	}
+	//
+	//	if err := database.UpdateUser(user)
+	//}
 	return nil
 }
 
