@@ -10,18 +10,19 @@ import (
 	"strings"
 )
 
-func InsertInExpenseTable(expense models.Expense) {
+func InsertInExpenseTable(expense models.Expense) error {
 
 	membersJson, err := json.Marshal(expense.Members)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	query := "INSERT INTO EXPENSES (description, amount,added_by,paid_by,members,isequal,issettled) VALUES ($1,$2,$3,$4,$5,$6,$7)"
 
 	_, err = db.Exec(query, expense.Description, expense.Amount, expense.User_added, expense.User_paid, membersJson, expense.IsEqually, expense.IsSettled)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func UpdateInExpenseTable(expense models.Expense) error {

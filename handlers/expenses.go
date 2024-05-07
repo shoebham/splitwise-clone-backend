@@ -11,8 +11,11 @@ func GetAllExpense() {
 
 }
 
-func CreateExpense(expense models.Expense) {
-	database.InsertInExpenseTable(expense)
+func CreateExpense(expense models.Expense) error {
+	if err := database.InsertInExpenseTable(expense); err != nil {
+		return err
+	}
+	return nil
 }
 
 func UpdateExpense(expense models.Expense) error {

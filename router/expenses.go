@@ -7,6 +7,7 @@ import (
 	"splitwise-backend/models"
 )
 
+// after create expense, we should update members and their balance.
 func SetupExpenseRoutes(app *fiber.App) {
 	expenses := app.Group("/expense")
 
