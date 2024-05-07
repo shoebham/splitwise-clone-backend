@@ -34,7 +34,10 @@ func createNewExpense(expenses fiber.Router) {
 	expenses.Post("/", func(c fiber.Ctx) error {
 		expenseArr := createFakeExpenses()
 		for _, expense := range expenseArr {
-			handlers.CreateExpense(expense)
+			err := handlers.CreateExpense(expense)
+			if err != nil {
+				return err
+			}
 		}
 
 		return SuccessfulRequest(c, "Expense Created")
