@@ -3,7 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"reflect"
 	"splitwise-backend/constants"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -85,4 +87,36 @@ func CheckIdExists(tableName string, columnName string, id int) (bool, error) {
 	}
 	return exists, nil
 
+}
+
+func buildUpdateQuery(model interface{}, tableName string, id string) (string, []interface{}) {
+	var queryVars []string
+	var queryParams []interface{}
+	v := reflect.ValueOf(model)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
+		fieldValue := v.Field(i).Interface()
+
+		// Check if fieldValue is a map[int]float64
+		if m, ok := fieldValue.(map[int]float64); ok {
+			// Handle map[int]float64 separately
+			for key, value := range m {
+				queryVars = append(queryVars, fmt.Sprintf("%s[%d] = $%d", field.Tag.Get("json"), key, len(queryParams)+1))
+				queryParams = append(queryParams, value)
+			}
+			continue // Skip the rest of the loop iteration
+		}
+
+		if fieldValue != reflect.Zero(v.Field(i).Type()).Interface() {
+			queryVars = append(queryVars, fmt.Sprintf("%s = $%d", field.Tag.Get("json"), len(queryParams)+1))
+			queryParams = append(queryParams, fieldValue)
+		}
+
+	}
+
+	idUpprCase := strings.Title(id)
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE %s = $%d", tableName, strings.Join(queryVars, ", "), id, len(queryParams)+1)
+	queryParams = append(queryParams, v.FieldByName(idUpprCase).Interface())
+
+	return query, queryParams
 }
