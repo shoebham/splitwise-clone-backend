@@ -18,8 +18,8 @@ type Expense struct {
 	Eid         int             `json:"Eid"`
 	Description string          `json:"Description"`
 	Amount      int             `json:"Amount"`
-	User_added  int             `json:"User_added"`
-	User_paid   int             `json:"User_paid"`
+	UserAdded   int             `json:"User_added"`
+	UserPaid    int             `json:"User_paid"`
 	Members     map[int]float64 `json:"Members"`
 	IsEqually   bool            `json:"IsEqually"`
 	IsSettled   bool            `json:"IsSettled"`
