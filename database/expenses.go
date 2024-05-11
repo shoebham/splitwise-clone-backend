@@ -3,11 +3,8 @@ package database
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v3/log"
-	"reflect"
 	"splitwise-backend/models"
-	"strings"
 )
 
 func InsertInExpenseTable(expense models.Expense) error {
@@ -18,7 +15,7 @@ func InsertInExpenseTable(expense models.Expense) error {
 	}
 	query := "INSERT INTO EXPENSES (description, amount,added_by,paid_by,members,isequal,issettled) VALUES ($1,$2,$3,$4,$5,$6,$7)"
 
-	_, err = db.Exec(query, expense.Description, expense.Amount, expense.User_added, expense.User_paid, membersJson, expense.IsEqually, expense.IsSettled)
+	_, err = db.Exec(query, expense.Description, expense.Amount, expense.UserAdded, expense.UserPaid, membersJson, expense.IsEqually, expense.IsSettled)
 	if err != nil {
 		return err
 	}
@@ -27,7 +24,7 @@ func InsertInExpenseTable(expense models.Expense) error {
 
 func UpdateInExpenseTable(expense models.Expense) error {
 
-	query, queryParams := buildUpdateQuery(expense)
+	query, queryParams := buildUpdateQuery(expense, "expenses", "eid")
 	_, err := db.Exec(query, queryParams...)
 	if err != nil {
 		return err
@@ -49,37 +46,6 @@ func DeleteFromExpenseTable(eid int) error {
 		return errors.New("Expense not found")
 	}
 	return nil
-}
-
-func buildUpdateQuery(model interface{}) (string, []interface{}) {
-	var queryVars []string
-	var queryParams []interface{}
-	v := reflect.ValueOf(model)
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Type().Field(i)
-		fieldValue := v.Field(i).Interface()
-
-		// Check if fieldValue is a map[int]float64
-		if m, ok := fieldValue.(map[int]float64); ok {
-			// Handle map[int]float64 separately
-			for key, value := range m {
-				queryVars = append(queryVars, fmt.Sprintf("%s[%d] = $%d", field.Tag.Get("json"), key, len(queryParams)+1))
-				queryParams = append(queryParams, value)
-			}
-			continue // Skip the rest of the loop iteration
-		}
-
-		if fieldValue != reflect.Zero(v.Field(i).Type()).Interface() {
-			queryVars = append(queryVars, fmt.Sprintf("%s = $%d", field.Tag.Get("json"), len(queryParams)+1))
-			queryParams = append(queryParams, fieldValue)
-		}
-
-	}
-
-	query := fmt.Sprintf("UPDATE expenses SET %s WHERE eid = $%d", strings.Join(queryVars, ", "), len(queryParams)+1)
-	queryParams = append(queryParams, v.FieldByName("Eid").Interface())
-
-	return query, queryParams
 }
 
 func SettleExpense(expense models.Expense) {

@@ -108,6 +108,10 @@ func buildUpdateQuery(model interface{}, tableName string, id string) (string, [
 		}
 
 		if fieldValue != reflect.Zero(v.Field(i).Type()).Interface() {
+			jsonName := field.Tag.Get("json")
+			if jsonName == "Eid" || jsonName == "Gid" || jsonName == "Uid" {
+				continue
+			}
 			queryVars = append(queryVars, fmt.Sprintf("%s = $%d", field.Tag.Get("json"), len(queryParams)+1))
 			queryParams = append(queryParams, fieldValue)
 		}

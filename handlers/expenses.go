@@ -3,6 +3,7 @@ package handlers
 import (
 	"splitwise-backend/database"
 	"splitwise-backend/models"
+	"strconv"
 )
 
 func GetAllExpense() {
@@ -15,20 +16,28 @@ func CreateExpense(expense models.Expense) error {
 	if err := database.InsertInExpenseTable(expense); err != nil {
 		return err
 	}
+
 	// for each user update in user table
 	// if not equal then iterate over user members, check the sum of share it should be equal to amount
 	// for each user update users share, if user paid and in members, do nothing for that user
+	var userIds []string
+	var shares []float64
+	for uid, share := range expense.Members {
+		userIds = append(userIds, strconv.Itoa(uid))
+		shares = append(shares, share)
+	}
+	users := GetUserById(userIds)
+	for i, user := range users {
+		if val, ok := user.Owes[expense.UserPaid]; ok {
+			user.Owes[expense.UserPaid] = val + shares[i]
+		} else {
+			user.Owes[expense.UserPaid] = shares[i]
+		}
+	}
+	for _, user := range users {
+		CreateUser(user)
+	}
 
-	//for userId, share := range expense.Members {
-	//	if userId == expense.User_paid{
-	//
-	//	}
-	//	user := models.User{
-	//		uid:userId,
-	//	}
-	//
-	//	if err := database.UpdateUser(user)
-	//}
 	return nil
 }
 
