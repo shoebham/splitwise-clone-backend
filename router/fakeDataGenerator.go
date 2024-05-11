@@ -46,8 +46,8 @@ func createFakeExpenses() []models.Expense {
 		expense.UserAdded = 104
 		expense.UserPaid = 104
 		expense.Members = map[int]float64{
-			102: float64(expense.Amount / 2),
-			103: float64(expense.Amount / 2),
+			102: float64(expense.Amount / 2.0),
+			103: float64(expense.Amount / 2.0),
 		}
 		expenseArr = append(expenseArr, expense)
 	}

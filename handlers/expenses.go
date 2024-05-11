@@ -28,14 +28,20 @@ func CreateExpense(expense models.Expense) error {
 	}
 	users := GetUserById(userIds)
 	for i, user := range users {
+		if user.Owes == nil {
+			user.Owes = make(map[int]float64)
+		}
 		if val, ok := user.Owes[expense.UserPaid]; ok {
 			user.Owes[expense.UserPaid] = val + shares[i]
 		} else {
 			user.Owes[expense.UserPaid] = shares[i]
 		}
+		users[i] = user
 	}
 	for _, user := range users {
-		CreateUser(user)
+		if err := UpdateUser(user); err != nil {
+			return err
+		}
 	}
 
 	return nil

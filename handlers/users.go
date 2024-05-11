@@ -6,11 +6,20 @@ import (
 )
 
 func CreateUser(user models.User) error {
+	preInsertChecks(&user)
 	err := database.InsertInUserTable(user)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+func UpdateUser(user models.User) error {
+	preInsertChecks(&user)
+	if err := database.UpdateUser(user); err != nil {
+		return err
+	}
+	return nil
+
 }
 
 func GetAllUsers() []models.User {
@@ -20,9 +29,9 @@ func GetUserById(id []string) []models.User {
 	return database.SelectFromUsers(id)
 }
 
-func preInsertChecks(user models.User) {
+func preInsertChecks(user *models.User) {
 
-	bal := 0.0
+	bal := user.Balance
 	for _, share := range user.Owes {
 		bal -= share
 	}

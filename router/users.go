@@ -10,10 +10,10 @@ func SetupUserRoutes(app *fiber.App) {
 	users := app.Group("/user")
 
 	getUserDetails(app, users)
-	createUser(app, users)
+	createUser(users)
 }
 
-func createUser(app *fiber.App, users fiber.Router) {
+func createUser(users fiber.Router) {
 	usersArr := CreateFakeUsers()
 	users.Post("/", func(c fiber.Ctx) error {
 		for _, user := range usersArr {
