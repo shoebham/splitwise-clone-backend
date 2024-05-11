@@ -5,8 +5,12 @@ import (
 	"splitwise-backend/models"
 )
 
-func CreateUser(user models.User) {
-	database.InsertInUserTable(user)
+func CreateUser(user models.User) error {
+	err := database.InsertInUserTable(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetAllUsers() []models.User {

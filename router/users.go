@@ -18,7 +18,9 @@ func createUser(app *fiber.App, users fiber.Router) {
 	users.Post("/", func(c fiber.Ctx) error {
 		for _, user := range usersArr {
 			fmt.Printf("User created\n Name:%s Phone:%s\n", user.Name, user.Number)
-			handlers.CreateUser(app, user)
+			if err := handlers.CreateUser(user); err != nil {
+				return err
+			}
 		}
 		return nil
 	})
