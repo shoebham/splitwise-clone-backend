@@ -19,3 +19,17 @@ func GetAllUsers() []models.User {
 func GetUserById(id []string) []models.User {
 	return database.SelectFromUsers(id)
 }
+
+func preInsertChecks(user models.User) {
+
+	bal := 0.0
+	for _, share := range user.Owes {
+		bal -= share
+	}
+
+	for _, share := range user.Owed {
+		bal += share
+	}
+	user.Balance = bal
+
+}
