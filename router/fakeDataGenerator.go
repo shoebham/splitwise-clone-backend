@@ -43,6 +43,8 @@ func createFakeExpenses() []models.Expense {
 	for i := 0; i < 10; i++ {
 		var expense models.Expense
 		_ = faker.FakeData(&expense)
+		expense.UserAdded = 104
+		expense.UserPaid = 104
 		expense.Members = map[int]float64{
 			102: float64(expense.Amount / 2),
 			103: float64(expense.Amount / 2),
