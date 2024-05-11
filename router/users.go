@@ -26,7 +26,7 @@ func createUser(app *fiber.App, users fiber.Router) {
 
 func getUserDetails(app *fiber.App, users fiber.Router) fiber.Router {
 	return users.Get("/", func(c fiber.Ctx) error {
-		fakeUsers = handlers.GetAllUsers(app)
+		fakeUsers = handlers.GetAllUsers()
 		return c.SendString("Hello Users")
 
 	})

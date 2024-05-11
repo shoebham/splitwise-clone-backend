@@ -3,10 +3,16 @@ package database
 import (
 	"fmt"
 	"splitwise-backend/models"
+	"strings"
 )
 
-func SelectFromUsers() []models.User {
-	query := "SELECT * from users"
+func SelectFromUsers(uid []string) []models.User {
+	var query string
+	if len(uid) == 0 {
+		query = "SELECT * FROM users"
+	} else {
+		query = "SELECT * from users where uid in (" + strings.Join(uid, ",") + ")"
+	}
 	rows, err := db.Query(query)
 	if err != nil {
 		panic(err)
@@ -28,12 +34,24 @@ func SelectFromUsers() []models.User {
 	}
 	return users
 }
-func InsertInUserTable(user models.User) {
+
+func InsertInUserTable(user models.User) error {
 	query := "INSERT INTO USERS (name, number) VALUES ($1,$2) "
 	_, err := db.Query(query, user.Name, user.Number)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// defer rows.Close()
+	return nil
+}
+
+func UpdateUser(user models.User) error {
+	query, queryParams := buildUpdateQuery(user, "users", "uid")
+	_, err := db.Exec(query, queryParams...)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
