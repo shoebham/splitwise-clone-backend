@@ -99,9 +99,10 @@ func buildUpdateQuery(model interface{}, tableName string, id string) (string, [
 
 		// Check if fieldValue is a map[int]float64
 		if m, ok := fieldValue.(map[int]float64); ok {
+			jsonName := field.Tag.Get("json")
 			// Handle map[int]float64 separately
 			for key, value := range m {
-				queryVars = append(queryVars, fmt.Sprintf("%s[%d] = $%d", field.Tag.Get("json"), key, len(queryParams)+1))
+				queryVars = append(queryVars, fmt.Sprintf(`%s=jsonb_set(%s,'{%d}', $%d::jsonb)`, jsonName, jsonName, key, len(queryParams)+1))
 				queryParams = append(queryParams, value)
 			}
 			continue // Skip the rest of the loop iteration
@@ -112,8 +113,17 @@ func buildUpdateQuery(model interface{}, tableName string, id string) (string, [
 			if jsonName == "Eid" || jsonName == "Gid" || jsonName == "Uid" {
 				continue
 			}
-			queryVars = append(queryVars, fmt.Sprintf("%s = $%d", field.Tag.Get("json"), len(queryParams)+1))
-			queryParams = append(queryParams, fieldValue)
+			switch fieldValue.(type) {
+			case map[int]float64:
+				m := fieldValue.(map[int]float64)
+				for key, value := range m {
+					queryVars = append(queryVars, fmt.Sprintf("%s->>%d = $%d", jsonName, key, len(queryParams)+1))
+					queryParams = append(queryParams, value)
+				}
+			default:
+				queryVars = append(queryVars, fmt.Sprintf("%s = $%d", jsonName, len(queryParams)+1))
+				queryParams = append(queryParams, fieldValue)
+			}
 		}
 
 	}
