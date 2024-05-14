@@ -25,22 +25,30 @@ func SelectFromUsers(uid []string) []models.User {
 	for rows.Next() {
 
 		user := models.User{}
-		var owesByte []byte // Declare a pointer to a map
-		var owedByte []byte // Declare a pointer to a map
+		var owesString string // Declare a pointer to a map
+		var owedString string // Declare a pointer to a map
 
-		if err := rows.Scan(&user.Uid, &user.Name, &user.Balance, &owesByte, &owedByte, &user.Number); err != nil {
+		if err := rows.Scan(&user.Uid, &user.Name, &user.Balance, &owesString, &owedString, &user.Number); err != nil {
 			panic(err)
 		}
 		var owesMap map[int]float64
 		var owedMap map[int]float64
 
-		owesMap, _ = parseJsonbObject(owesByte)
-		owedMap, _ = parseJsonbObject(owedByte)
+		if err := json.Unmarshal([]byte(owesString), &owesMap); err != nil {
+			panic(err)
+			return nil
+		}
+		if err := json.Unmarshal([]byte(owedString), &owedMap); err != nil {
+			panic(err)
+			return nil
+		}
+		//owesMap, _ = (owesByte)
+		//owedMap, _ = parseJsonbObject(owedByte)
 
 		user.Owes = owesMap
 		user.Owed = owedMap
 		users = append(users, user)
-		fmt.Printf("Name: %s, Number: %s\n", user.Name, user.Number)
+		fmt.Printf("Name: %s, Number: %s Owes: %v\n", user.Name, user.Number, user.Owes)
 	}
 	return users
 }
@@ -78,6 +86,7 @@ func InsertInUserTable(user models.User) error {
 
 func UpdateUser(user models.User) error {
 	query, queryParams := buildUpdateQuery(user, "users", "uid")
+	fmt.Printf("Inserting %v\n", queryParams)
 	_, err := db.Exec(query, queryParams...)
 	if err != nil {
 		return err

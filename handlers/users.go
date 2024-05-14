@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"splitwise-backend/database"
 	"splitwise-backend/models"
 )
@@ -31,7 +32,8 @@ func GetUserById(id []string) []models.User {
 
 func preInsertChecks(user *models.User) {
 
-	bal := user.Balance
+	bal := 0.0
+	fmt.Printf("User: %v, Balance: %v Owes: %v \n", user.Name, bal, user.Owes)
 	for _, share := range user.Owes {
 		bal -= share
 	}

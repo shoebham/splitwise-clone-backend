@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"splitwise-backend/database"
 	"splitwise-backend/models"
 	"strconv"
@@ -49,6 +50,7 @@ func CreateExpense(expense models.Expense) error {
 			return err
 		}
 	}
+	fmt.Println("-----------------------------")
 
 	return nil
 }
