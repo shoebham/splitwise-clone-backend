@@ -45,7 +45,7 @@ func createNewExpense(expenses fiber.Router) {
 	})
 }
 func updateExpense(expenses fiber.Router) {
-	expenses.Put("/:id", func(c fiber.Ctx) error {
+	expenses.Patch("/:id", func(c fiber.Ctx) error {
 
 		idInt, idErr := CheckId(c)
 		if idErr != nil {
