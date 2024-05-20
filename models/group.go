@@ -8,7 +8,7 @@ package models
 	}
 */
 type Group struct {
-	Gid       int    `json:"Gid"`
-	GroupName string `json:"GroupName"`
-	Members   []int  `json:"Members"`
+	Gid       int    `json:"Gid" sql:"gid"`
+	GroupName string `json:"GroupName" sql:"group_name"`
+	Members   []int  `json:"Members" sql:"members"`
 }
