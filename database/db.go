@@ -99,18 +99,25 @@ func buildUpdateQuery(model interface{}, tableName string, id string) (string, [
 
 		// Check if fieldValue is a map[int]float64
 		if m, ok := fieldValue.(map[int]float64); ok {
-			jsonName := field.Tag.Get("json")
+			jsonName := field.Tag.Get("sql")
+			temp := fmt.Sprintf("%s=%s || '{ ", jsonName, jsonName)
+			var tempQueryVars []string
 			// Handle map[int]float64 separately
 			for key, value := range m {
-				queryVars = append(queryVars, fmt.Sprintf(`%s=jsonb_set(%s,'{%d}', $%d::jsonb)`, jsonName, jsonName, key, len(queryParams)+1))
+
+				tempQueryVars = append(tempQueryVars, fmt.Sprintf(`"%d":$%d`, key, len(queryParams)+1))
 				queryParams = append(queryParams, value)
+
 			}
+			temp += strings.Join(tempQueryVars, ",")
+			temp += "}'::jsonb"
+			queryVars = append(queryVars, temp)
 			continue // Skip the rest of the loop iteration
 		}
 
 		if fieldValue != reflect.Zero(v.Field(i).Type()).Interface() {
-			jsonName := field.Tag.Get("json")
-			if jsonName == "Eid" || jsonName == "Gid" || jsonName == "Uid" {
+			jsonName := field.Tag.Get("sql")
+			if (jsonName == "Eid" || jsonName == "Gid" || jsonName == "Uid") && (i == 0) {
 				continue
 			}
 			switch fieldValue.(type) {

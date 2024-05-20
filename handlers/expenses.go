@@ -22,6 +22,16 @@ func CreateExpense(expense models.Expense) error {
 	// if not equal then iterate over user members, check the sum of share it should be equal to amount
 	// for each user update users share, if user paid and in members, do nothing for that user
 
+	err := updateUserAfterCreatingOrUpdatingExpense(expense)
+	if err != nil {
+		return err
+	}
+	fmt.Println("-----------------------------")
+
+	return nil
+}
+
+func updateUserAfterCreatingOrUpdatingExpense(expense models.Expense) error {
 	var userIds []string
 	var shares []float64
 	// get user ids and their shares
@@ -35,6 +45,9 @@ func CreateExpense(expense models.Expense) error {
 	for i, user := range users {
 		if user.Owes == nil {
 			user.Owes = make(map[int]float64)
+		}
+		if expense.UserPaid == 0 {
+			continue
 		}
 		if val, ok := user.Owes[expense.UserPaid]; ok {
 			user.Owes[expense.UserPaid] = val + shares[i]
@@ -50,7 +63,6 @@ func CreateExpense(expense models.Expense) error {
 			return err
 		}
 	}
-	fmt.Println("-----------------------------")
 
 	return nil
 }
@@ -59,6 +71,14 @@ func UpdateExpense(expense models.Expense) error {
 	if err := database.UpdateInExpenseTable(expense); err != nil {
 		return err
 	}
+
+	if expense.Members != nil && len(expense.Members) > 0 {
+		err := updateUserAfterCreatingOrUpdatingExpense(expense)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

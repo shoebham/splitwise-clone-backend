@@ -2,7 +2,6 @@ package router
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"github.com/mitchellh/mapstructure"
 	"splitwise-backend/handlers"
 	"splitwise-backend/models"
 )
@@ -52,16 +51,17 @@ func updateExpense(expenses fiber.Router) {
 			return idErr
 		}
 
-		var updatedExpense map[string]interface{}
-
-		if err := c.Bind().Body(&updatedExpense); err != nil {
-			return err
-		}
+		//var updatedExpense map[string]interface{}
 		var expense models.Expense
-		expense.Eid = idInt
-		if err := mapstructure.Decode(updatedExpense, &expense); err != nil {
+
+		if err := c.Bind().Body(&expense); err != nil {
 			return err
 		}
+		expense.Eid = idInt
+
+		//if err := mapstructure.Decode(updatedExpense, &expense); err != nil {
+		//	return err
+		//}
 
 		if err := handlers.UpdateExpense(expense); err != nil {
 			return InternalError(c, err)

@@ -87,7 +87,19 @@ func InsertInUserTable(user models.User) error {
 func UpdateUser(user models.User) error {
 	query, queryParams := buildUpdateQuery(user, "users", "uid")
 	fmt.Printf("Inserting %v\n", queryParams)
-	_, err := db.Exec(query, queryParams...)
+	var replacedQuery string
+	replacedQuery = query
+	for i, param := range queryParams {
+		if _, ok := param.(string); ok {
+			replacedQuery = strings.Replace(replacedQuery, fmt.Sprintf("$%d", i+1), fmt.Sprintf(`'%v'`, param), -1)
+
+		} else {
+			replacedQuery = strings.Replace(replacedQuery, fmt.Sprintf("$%d", i+1), fmt.Sprintf("%v", param), -1)
+		}
+	}
+
+	fmt.Println("Replaced query:", replacedQuery)
+	_, err := db.Exec(replacedQuery)
 	if err != nil {
 		return err
 	}

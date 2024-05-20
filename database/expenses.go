@@ -3,8 +3,10 @@ package database
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v3/log"
 	"splitwise-backend/models"
+	"strings"
 )
 
 func InsertInExpenseTable(expense models.Expense) error {
@@ -25,7 +27,16 @@ func InsertInExpenseTable(expense models.Expense) error {
 func UpdateInExpenseTable(expense models.Expense) error {
 
 	query, queryParams := buildUpdateQuery(expense, "expenses", "eid")
-	_, err := db.Exec(query, queryParams...)
+	// Replace placeholders in the query string with actual values
+	var replacedQuery string
+	replacedQuery = query
+	for i, param := range queryParams {
+		replacedQuery = strings.Replace(replacedQuery, fmt.Sprintf("$%d", i+1), fmt.Sprintf("%v", param), -1)
+	}
+
+	fmt.Println("Replaced query:", replacedQuery)
+
+	_, err := db.Exec(replacedQuery)
 	if err != nil {
 		return err
 	}
