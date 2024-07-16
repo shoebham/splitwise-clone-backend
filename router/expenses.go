@@ -59,10 +59,6 @@ func updateExpense(expenses fiber.Router) {
 		}
 		expense.Eid = idInt
 
-		//if err := mapstructure.Decode(updatedExpense, &expense); err != nil {
-		//	return err
-		//}
-
 		if err := handlers.UpdateExpense(expense); err != nil {
 			return InternalError(c, err)
 		}
