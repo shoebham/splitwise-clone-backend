@@ -23,6 +23,10 @@ func UpdateGroup(group models.Group) error {
 	return nil
 }
 
+func GetGroupById(id []string) []models.Group {
+	return database.SelectFromGroups(id)
+}
+
 func DeleteGroup(gid int) error {
 	err := database.DeleteGroup(gid)
 	if err != nil {

@@ -6,20 +6,21 @@ import (
 	"github.com/lib/pq"
 	"math/rand"
 	"splitwise-backend/models"
+	"strings"
 )
 
 func GetGroups() {
 }
 
 func InsertInGroupTable(group models.Group) {
-	userId := make([]int, 0, rand.Intn(len(group.Members)))
+	groupId := make([]int, 0, rand.Intn(len(group.Members)))
 	for _, member := range group.Members {
 		if rand.Float64() < 0.5 { // Randomly decide to add a member or not
-			userId = append(userId, member)
+			groupId = append(groupId, member)
 		}
 	}
 	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
-	_, err := db.Exec(query, group.GroupName, pq.Array(userId))
+	_, err := db.Exec(query, group.GroupName, pq.Array(groupId))
 	if err != nil {
 		panic(err)
 	}
@@ -93,4 +94,20 @@ func DeleteMembersFromGroup(gid int, members []int) error {
 		return errors.New("group not found")
 	}
 	return nil
+}
+
+func SelectFromGroups(gid []string) []models.Group {
+	var query string
+	if len(gid) == 0 {
+		query = "SELECT * FROM groups"
+	} else {
+		query = "SELECT * from groups where gid in (" + strings.Join(gid, ",") + ")"
+	}
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	groups := []models.Group{}
+	return groups
 }
