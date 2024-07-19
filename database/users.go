@@ -15,7 +15,7 @@ func SelectFromUsers(uid []string) []models.User {
 	} else {
 		query = "SELECT * from users where uid in (" + strings.Join(uid, ",") + ")"
 	}
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +48,7 @@ func SelectFromUsers(uid []string) []models.User {
 		user.Owes = owesMap
 		user.Owed = owedMap
 		users = append(users, user)
-		fmt.Printf("Name: %s, Number: %s Owes: %v\n", user.Name, user.Number, user.Owes)
+		//fmt.Printf("Name: %s, Number: %s Owes: %v\n", user.Name, user.Number, user.Owes)
 	}
 	return users
 }
@@ -75,7 +75,7 @@ func parseJsonbObject(data []byte) (map[int]float64, error) {
 }
 func InsertInUserTable(user models.User) error {
 	query := "INSERT INTO USERS (name, number) VALUES ($1,$2) "
-	_, err := db.Query(query, user.Name, user.Number)
+	_, err := DB.Query(query, user.Name, user.Number)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func UpdateUser(user models.User) error {
 	}
 
 	fmt.Println("Replaced query:", replacedQuery)
-	_, err := db.Exec(replacedQuery)
+	_, err := DB.Exec(replacedQuery)
 	if err != nil {
 		return err
 	}

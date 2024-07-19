@@ -12,7 +12,7 @@ import (
 func GetGroups() {
 }
 
-func InsertInGroupTable(group models.Group) {
+func InsertInGroupTable(group models.Group) error {
 	groupId := make([]int, 0, rand.Intn(len(group.Members)))
 	for _, member := range group.Members {
 		if rand.Float64() < 0.5 { // Randomly decide to add a member or not
@@ -20,10 +20,11 @@ func InsertInGroupTable(group models.Group) {
 		}
 	}
 	query := "INSERT INTO GROUPS (group_name, members) VALUES ($1,$2)"
-	_, err := db.Exec(query, group.GroupName, pq.Array(groupId))
+	_, err := DB.Exec(query, group.GroupName, pq.Array(groupId))
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func UpdateGroup(group models.Group) error {
@@ -32,7 +33,7 @@ func UpdateGroup(group models.Group) error {
 	if exists {
 		query := "UPDATE groups SET group_name= $1, members =$2 where gid = $3"
 
-		_, err := db.Query(query, group.GroupName, pq.Array(group.Members), group.Gid)
+		_, err := DB.Query(query, group.GroupName, pq.Array(group.Members), group.Gid)
 		if err != nil {
 			panic(err)
 		}
@@ -50,7 +51,7 @@ func DeleteGroup(gid int) error {
 	if exists {
 		query := "DELETE FROM groups WHERE gid = $1"
 
-		_, err := db.Query(query, gid)
+		_, err := DB.Query(query, gid)
 		if err != nil {
 			panic(err)
 		}
@@ -67,7 +68,7 @@ func AddMembersToGroup(gid int, members []int) error {
 
 	if exists {
 		query := "UPDATE groups SET members = $1 where gid = $2"
-		_, err := db.Exec(query, pq.Array(members), gid)
+		_, err := DB.Exec(query, pq.Array(members), gid)
 		if err != nil {
 			panic(err)
 		}
@@ -84,7 +85,7 @@ func DeleteMembersFromGroup(gid int, members []int) error {
 	if exists {
 		for _, member := range members {
 			query := "UPDATE groups SET members = array_remove(members,$1) where gid = $2"
-			_, err := db.Exec(query, member, gid)
+			_, err := DB.Exec(query, member, gid)
 			if err != nil {
 				panic(err)
 			}
@@ -103,7 +104,7 @@ func SelectFromGroups(gid []string) []models.Group {
 	} else {
 		query = "SELECT * from groups where gid in (" + strings.Join(gid, ",") + ")"
 	}
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		panic(err)
 	}

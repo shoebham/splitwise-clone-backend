@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"splitwise-backend/handlers"
+	"splitwise-backend/models"
 )
 
 func SetupUserRoutes(app *fiber.App) {
@@ -14,15 +15,19 @@ func SetupUserRoutes(app *fiber.App) {
 }
 
 func createUser(users fiber.Router) {
-	usersArr := CreateFakeUsers()
 	users.Post("/", func(c fiber.Ctx) error {
-		for _, user := range usersArr {
-			fmt.Printf("User created\n Name:%s Phone:%s\n", user.Name, user.Number)
-			if err := handlers.CreateUser(user); err != nil {
-				return err
-			}
+		var user models.User
+		if err := c.Bind().Body(&user); err != nil {
+			return err
 		}
-		return nil
+
+		if err := handlers.CreateUser(user); err != nil {
+			return InternalError(c, err)
+		}
+
+		fmt.Printf("User created\n Name:%s Phone:%s\n", user.Name, user.Number)
+
+		return SuccessfulRequest(c, "User Created")
 	})
 }
 

@@ -8,11 +8,15 @@ import (
 )
 
 func GetAllGroups(c *fiber.App) {
-	database.GetAllData("groups")
+	err := database.GetAllData("groups")
+	if err != nil {
+		return
+	}
 }
 
-func CreateGroup(c *fiber.App, group models.Group) {
-	database.InsertInGroupTable(group)
+func CreateGroup(group models.Group) error {
+	err := database.InsertInGroupTable(group)
+	return err
 }
 
 func UpdateGroup(group models.Group) error {

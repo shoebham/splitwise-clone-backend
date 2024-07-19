@@ -10,21 +10,23 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
+var DB *sql.DB
 
-func InitDb() {
+func InitDb() error {
 	connStr := fmt.Sprintf("user=%s dbname=splitwise_backend password=%s sslmode=disable", constants.DB_USER, constants.DB_PASS)
 	var err error
-	db, err = sql.Open("postgres", connStr)
+	DB, err = sql.Open("postgres", connStr)
 	if err != nil {
-		panic(err)
+
+		return err
 	}
 	fmt.Println("Database connection succssfull")
-	// defer db.Close()
+	return DB.Ping()
+	// defer DB.Close()
 
 }
 func GetAllData(tableName string) error {
-	rows, err := selectAllFromTableInternal(db, tableName)
+	rows, err := selectAllFromTableInternal(DB, tableName)
 	if err != nil {
 		return err
 	}
@@ -67,9 +69,9 @@ func GetAllData(tableName string) error {
 	return nil
 }
 
-func selectAllFromTableInternal(db *sql.DB, tableName string) (*sql.Rows, error) {
+func selectAllFromTableInternal(DB *sql.DB, tableName string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s", tableName)
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +83,7 @@ func CheckIdExists(tableName string, columnName string, id int) (bool, error) {
 
 	query := fmt.Sprintf("SELECT exists(select 1 from %s where %s = %d)", tableName, columnName, id)
 	var exists bool
-	err := db.QueryRow(query).Scan(&exists)
+	err := DB.QueryRow(query).Scan(&exists)
 	if err != nil {
 		return false, err
 	}

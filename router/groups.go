@@ -9,8 +9,8 @@ import (
 func SetupGroupRoutes(app *fiber.App) {
 	groups := app.Group("/group")
 	getGroupDetails(groups)
-	createNewGroup(app, groups)
-	updateGroup(app, groups)
+	createNewGroup(groups)
+	updateGroup(groups)
 	deleteGroup(groups)
 	addGroupMember(groups)
 	deleteGroupMember(groups)
@@ -24,19 +24,23 @@ func getGroupDetails(groups fiber.Router) {
 		return nil
 	})
 }
-func createNewGroup(app *fiber.App, groups fiber.Router) {
+func createNewGroup(groups fiber.Router) {
 	// create new group
 	groups.Post("/", func(c fiber.Ctx) error {
-		groupsArr := createFakeGroups()
-		for _, group := range groupsArr {
-			handlers.CreateGroup(app, group)
+		var group models.Group
+		if err := c.Bind().Body(&group); err != nil {
+			return err
+		}
+
+		if err := handlers.CreateGroup(group); err != nil {
+			return InternalError(c, err)
 		}
 
 		return SuccessfulRequest(c, "Group Created")
 	})
 }
 
-func updateGroup(app *fiber.App, groups fiber.Router) {
+func updateGroup(groups fiber.Router) {
 	// update group with group id
 	groups.Put("/:id", func(c fiber.Ctx) error {
 

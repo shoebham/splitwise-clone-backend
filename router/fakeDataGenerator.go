@@ -21,11 +21,11 @@ func CreateFakeUsers() []models.User {
 	return usersArr
 }
 
-func createFakeGroups() []models.Group {
+func CreateFakeGroups() []models.Group {
 	groupsArr := []models.Group{}
 	fakeUsersId := make([]int, len(fakeUsers))
-	for _, user := range fakeUsers {
-		fakeUsersId = append(fakeUsersId, user.Uid)
+	for i, user := range fakeUsers {
+		fakeUsersId[i] = user.Uid
 	}
 	for i := 0; i < 10; i++ {
 		group_name := faker.Word()

@@ -17,7 +17,7 @@ func InsertInExpenseTable(expense models.Expense) error {
 	}
 	query := "INSERT INTO EXPENSES (description, amount,added_by,paid_by,members,isequal,issettled) VALUES ($1,$2,$3,$4,$5,$6,$7)"
 
-	_, err = db.Exec(query, expense.Description, expense.Amount, expense.UserAdded, expense.UserPaid, membersJson, expense.IsEqually, expense.IsSettled)
+	_, err = DB.Exec(query, expense.Description, expense.Amount, expense.UserAdded, expense.UserPaid, membersJson, expense.IsEqually, expense.IsSettled)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func UpdateInExpenseTable(expense models.Expense) error {
 
 	fmt.Println("Replaced query:", replacedQuery)
 
-	_, err := db.Exec(replacedQuery)
+	_, err := DB.Exec(replacedQuery)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func DeleteFromExpenseTable(eid int) error {
 	if exists {
 		query := "DELETE FROM expenses WHERE eid = $1"
 
-		_, err := db.Query(query, eid)
+		_, err := DB.Query(query, eid)
 		if err != nil {
 			panic(err)
 		}
